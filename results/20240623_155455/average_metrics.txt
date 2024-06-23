@@ -1,0 +1,8 @@
+accuracy_failure: 0.9841
+mcc_failure: 0.7141237555710671
+accuracy_failure_type: 0.98155
+mcc_failure_type: 0.6848929495880697
+train_acc_failure: 99.999
+test_acc_failure: 98.41
+train_acc_failure_type: 100.0
+test_acc_failure_type: 98.155

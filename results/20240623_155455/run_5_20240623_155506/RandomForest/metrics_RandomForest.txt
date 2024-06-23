@@ -1,0 +1,42 @@
+Failure Detection:
+              precision    recall  f1-score   support
+
+           0       0.98      1.00      0.99      1931
+           1       0.83      0.55      0.66        69
+
+    accuracy                           0.98      2000
+   macro avg       0.91      0.77      0.83      2000
+weighted avg       0.98      0.98      0.98      2000
+
+Confusion Matrix:
+[[1923    8]
+ [  31   38]]
+Accuracy: 0.9805
+Matthews Correlation Coefficient (MCC): 0.6654716811616161
+
+Train Accuracy: 100.0
+Test Accuracy: 98.05
+
+Failure Type Detection:
+                          precision    recall  f1-score   support
+
+Heat Dissipation Failure       1.00      0.74      0.85        23
+              No Failure       0.98      1.00      0.99      1932
+      Overstrain Failure       0.83      0.36      0.50        14
+           Power Failure       0.81      0.59      0.68        22
+         Random Failures       0.00      0.00      0.00         3
+       Tool Wear Failure       0.00      0.00      0.00         6
+
+                accuracy                           0.98      2000
+               macro avg       0.61      0.45      0.50      2000
+            weighted avg       0.98      0.98      0.98      2000
+
+Confusion Matrix:
+[[  17    5    0    1    0    0]
+ [   0 1930    0    2    0    0]
+ [   0    9    5    0    0    0]
+ [   0    8    1   13    0    0]
+ [   0    3    0    0    0    0]
+ [   0    6    0    0    0    0]]
+Accuracy: 0.9825
+Matthews Correlation Coefficient (MCC): 0.6943594563152127

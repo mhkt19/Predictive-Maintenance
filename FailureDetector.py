@@ -1,17 +1,11 @@
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, matthews_corrcoef, ConfusionMatrixDisplay
-from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime
-from xgboost import XGBClassifier
+from statistics import mean
 
 def load_data(filepath):
     """Load the dataset from a CSV file."""
@@ -28,12 +22,6 @@ def preprocess_data(data):
     target_failure = data['Target']
     target_failure_type = data['Failure Type']
     return features, target_failure, target_failure_type
-
-def handle_imbalance(X, y):
-    """Handle imbalanced dataset using SMOTE."""
-    smote = SMOTE()
-    X_resampled, y_resampled = smote.fit_resample(X, y)
-    return X_resampled, y_resampled
 
 def split_data(features, target):
     """Split the data into training and testing sets."""
@@ -87,6 +75,7 @@ def save_results(folder_path, model_name, report_failure, cm_failure, accuracy_f
     ax[1].set_ylabel('True')
 
     plt.savefig(os.path.join(folder_path, f'confusion_matrices_{model_name}.png'))
+
 def save_descriptive_statistics(data, folder_path):
     """Save descriptive statistics to a CSV file in the specified folder."""
     os.makedirs(folder_path, exist_ok=True)
@@ -100,43 +89,70 @@ def main():
     data = load_data(filepath)
     features, target_failure, target_failure_type = preprocess_data(data)
     
-    data.describe()
     # Create a main results folder with timestamp
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    main_folder_path = f'./results/{timestamp}'
+    main_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    main_folder_path = f'./results/{main_timestamp}'
     os.makedirs(main_folder_path, exist_ok=True)
+    
     # Save descriptive statistics
     save_descriptive_statistics(data, main_folder_path)
-    # Split data for failure detection
-    X_train_failure, X_test_failure, y_train_failure, y_test_failure = split_data(features, target_failure)
-    #X_train_failure_resampled, y_train_failure_resampled = handle_imbalance(X_train_failure, y_train_failure)
-
+    
     models = {
         'RandomForest': RandomForestClassifier(n_estimators=100)
     }
 
-    for model_name, model in models.items():
-        print(f"\nEvaluating model: {model_name}")
-        rf_failure = train_and_evaluate(model, X_train_failure, y_train_failure, X_test_failure, y_test_failure)
-        y_pred_failure, cm_failure, accuracy_failure, mcc_failure, report_failure, train_acc, test_acc = rf_failure
-        
-        train_acc = round(model.score(X_train_failure, y_train_failure) * 100, 2)
-        test_acc = round(model.score(X_test_failure, y_test_failure) * 100, 2)
-        print(f"\nEvaluating model (failure training data): {train_acc}%")
-        print(f"\nEvaluating model (failure test data): {test_acc}%")
-        # Split data for failure type prediction
-        X_train_failure_type, X_test_failure_type, y_train_failure_type, y_test_failure_type = split_data(features, target_failure_type)
-        #X_train_failure_type, y_train_failure_type = handle_imbalance(X_train_failure_type, y_train_failure_type)
-        rf_failure_type = train_and_evaluate(model, X_train_failure_type, y_train_failure_type, X_test_failure_type, y_test_failure_type)
-        y_pred_failure_type, cm_failure_type, accuracy_failure_type, mcc_failure_type, report_failure_type, _, _ = rf_failure_type
-          #accuracy 
-        train_acc = round(model.score(X_train_failure_type, y_train_failure_type) * 100, 2)
-        test_acc = round(model.score(X_test_failure_type, y_test_failure_type) * 100, 2)
-        print(f"\nEvaluating model (failure type training data): {train_acc}%")
-        print(f"\nEvaluating model (failure type test data): {test_acc}%")
-        # Save the results
-        model_folder_path = os.path.join(main_folder_path, model_name)
-        save_results(model_folder_path, model_name, report_failure, cm_failure, accuracy_failure, mcc_failure, report_failure_type, cm_failure_type, accuracy_failure_type, mcc_failure_type, train_acc, test_acc)
+    all_metrics = {
+        'accuracy_failure': [],
+        'mcc_failure': [],
+        'accuracy_failure_type': [],
+        'mcc_failure_type': [],
+        'train_acc_failure': [],
+        'test_acc_failure': [],
+        'train_acc_failure_type': [],
+        'test_acc_failure_type': []
+    }
+
+    for i in range(10):
+        run_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        run_folder_path = os.path.join(main_folder_path, f'run_{i+1}_{run_timestamp}')
+        os.makedirs(run_folder_path, exist_ok=True)
+
+        # Split data for failure detection
+        X_train_failure, X_test_failure, y_train_failure, y_test_failure = split_data(features, target_failure)
+
+
+        for model_name, model in models.items():
+            print(f"\nEvaluating model: {model_name} (Run {i+1})")
+            rf_failure = train_and_evaluate(model, X_train_failure, y_train_failure, X_test_failure, y_test_failure)
+            y_pred_failure, cm_failure, accuracy_failure, mcc_failure, report_failure, train_acc_failure, test_acc_failure = rf_failure
+
+            # Split data for failure type prediction
+            X_train_failure_type, X_test_failure_type, y_train_failure_type, y_test_failure_type = split_data(features, target_failure_type)
+           
+            rf_failure_type = train_and_evaluate(model, X_train_failure_type, y_train_failure_type, X_test_failure_type, y_test_failure_type)
+            y_pred_failure_type, cm_failure_type, accuracy_failure_type, mcc_failure_type, report_failure_type, train_acc_failure_type, test_acc_failure_type = rf_failure_type
+
+            # Save the results
+            model_folder_path = os.path.join(run_folder_path, model_name)
+            save_results(model_folder_path, model_name, report_failure, cm_failure, accuracy_failure, mcc_failure, report_failure_type, cm_failure_type, accuracy_failure_type, mcc_failure_type, train_acc_failure, test_acc_failure)
+
+            # Collect metrics for averaging
+            all_metrics['accuracy_failure'].append(accuracy_failure)
+            all_metrics['mcc_failure'].append(mcc_failure)
+            all_metrics['accuracy_failure_type'].append(accuracy_failure_type)
+            all_metrics['mcc_failure_type'].append(mcc_failure_type)
+            all_metrics['train_acc_failure'].append(train_acc_failure)
+            all_metrics['test_acc_failure'].append(test_acc_failure)
+            all_metrics['train_acc_failure_type'].append(train_acc_failure_type)
+            all_metrics['test_acc_failure_type'].append(test_acc_failure_type)
+
+    # Calculate average metrics
+    avg_metrics = {k: mean(v) for k, v in all_metrics.items()}
+
+    # Save average metrics to main folder
+    with open(os.path.join(main_folder_path, 'average_metrics.txt'), 'w') as f:
+        for metric, value in avg_metrics.items():
+            f.write(f'{metric}: {value}\n')
 
 if __name__ == "__main__":
     main()
