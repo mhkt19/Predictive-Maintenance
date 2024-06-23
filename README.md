@@ -34,14 +34,17 @@ The dataset consists of 10,000 data points stored as rows with 14 features in co
 After running the model 10 times, the average results are as follows:
 
 - **Failure Detection Accuracy**: 98.41%
-- **Failure Detection MCC**: 0.7141
 - **Failure Type Detection Accuracy**: 98.155%
-- **Failure Type Detection MCC**: 0.6849
-- **Training Accuracy (Failure Detection)**: 99.999%
-- **Testing Accuracy (Failure Detection)**: 98.41%
-- **Training Accuracy (Failure Type Detection)**: 100.0%
-- **Testing Accuracy (Failure Type Detection)**: 98.155%
 
+## Prerequisites
+
+Ensure you have the following packages installed:
+
+- pandas
+- numpy
+- scikit-learn
+- imbalanced-learn
+- matplotlib
 ## How to Run
 1. Clone the repository.
 2. Ensure you have the required packages installed:
@@ -62,4 +65,3 @@ The code performs the following steps:
 
 ## License
 This project is licensed under the MIT License.
-
