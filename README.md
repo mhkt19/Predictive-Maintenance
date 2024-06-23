@@ -1,5 +1,5 @@
 
-# Predictive Maintenance Classification
+# Predictive Maintenance
 
 ## Overview
 This repository contains code for predicting machine failures and the type of failure using a synthetic dataset. The dataset reflects real predictive maintenance scenarios encountered in the industry.
