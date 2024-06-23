@@ -17,19 +17,6 @@ The dataset consists of 10,000 data points stored as rows with 14 features in co
 - **Target**: Failure or Not
 - **Failure Type**: Type of Failure
 
-### Descriptive Statistics
-| Feature               | Count  | Mean     | Std       | Min   | 25%   | 50%   | 75%   | Max   | Null Count |
-|-----------------------|--------|----------|-----------|-------|-------|-------|-------|-------|------------|
-| UDI                   | 10000  | 5000.5   | 2886.90   | 1     | 2500.75 | 5000.5 | 7500.25 | 10000 | 0          |
-| Product ID            | 10000  | 4999.5   | 2886.90   | 0     | 2499.75 | 4999.5 | 7499.25 | 9999  | 0          |
-| Type                  | 10000  | 1.1994   | 0.6002    | 0     | 1     | 1     | 2     | 2     | 0          |
-| Air temperature [K]   | 10000  | 300.0049 | 2.0003    | 295.3 | 298.3 | 300.1 | 301.5 | 304.5 | 0          |
-| Process temperature [K] | 10000  | 310.0056 | 1.4837    | 305.7 | 308.8 | 310.1 | 311.1 | 313.8 | 0          |
-| Rotational speed [rpm] | 10000  | 1538.776 | 179.2841  | 1168  | 1423  | 1503  | 1612  | 2886  | 0          |
-| Torque [Nm]           | 10000  | 39.9869  | 9.9689    | 3.8   | 33.2  | 40.1  | 46.8  | 76.6  | 0          |
-| Tool wear [min]       | 10000  | 107.951  | 63.6541   | 0     | 53    | 108   | 162   | 253   | 0          |
-| Target                | 10000  | 0.0339   | 0.1810    | 0     | 0     | 0     | 0     | 1     | 0          |
-
 ## Results
 After running the model 10 times, the average results are as follows:
 
